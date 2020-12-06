@@ -49,7 +49,7 @@ app.use(
       console.log('decodedToken', decodedToken);
       return {
         'role': 'anonymous',
-        'jwt.claims.user_id': 'hihi'
+        'jwt.claims.user_id': decodedToken.uid
       };
     }
     
