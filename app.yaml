@@ -1,0 +1,42 @@
+
+# # [START runtime]
+# runtime: nodejs
+# env: flex
+# threadsafe: yes
+# service: default
+
+# env_variables:
+#   PGUSER: "postgres"
+#   PGHOST: "34.87.156.91"
+#   PGPASSWORD: "admin"
+#   PGDATABASE: "postgres"
+#   INSTANCE_CONNECTION_NAME: "routing-aadd4:asia-southeast1:awread-test"
+
+# manual_scaling:
+#   instances: 1
+# resources:
+#   cpu: 1
+#   memory_gb: 3.75
+#   disk_size_gb: 10
+
+
+
+# # [END runtime]
+# beta_settings:
+#   cloud_sql_instances: routing-aadd4:asia-southeast1:awread-test
+
+
+# handlers:
+#   - url: /(.*)
+#     static_files: ./\1
+#     upload: ./(.*)
+
+# #  settings to keep gcloud from uploading files not required for deployment
+# skip_files:
+#   - ^node_modules$
+#   - ^README\..*
+#   - ^package-lock.json
+#   - \.gitignore
+#   - \.es*
+#   - ^\.git$
+#   - ^errors\.log

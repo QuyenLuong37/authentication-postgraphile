@@ -1,0 +1,26 @@
+{
+  "name": "authentication",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "postgraphile --port 8080 -o --watch --enhance-graphiql -o -q / --host 0.0.0.0 -c postgres://postgres:admin@34.87.156.91:5432/postgres",
+    "start": "node ./src/index.js"
+  },
+  "engines": {
+    "node": "^10.15",
+    "npm": "^6.9"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "express-jwt": "^6.0.0",
+    "firebase-admin": "^9.4.1",
+    "jwks-rsa": "^1.11.0",
+    "postgraphile": "^4.9.2"
+  }
+}

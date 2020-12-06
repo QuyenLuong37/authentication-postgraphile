@@ -1,0 +1,43 @@
+version: '3.5'
+
+services:
+  myservice:
+    build: 
+      context: ./
+      dockerfile: Dockerfile
+    image: buildmydockerfile:v1
+  db:
+    container_name: postgres-container
+    image: postgres
+    hostname: postgres
+    environment: 
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+      PGDATA: /data/postgres
+    volumes: 
+      - db:/data/postgres
+    ports: 
+      - 5433:5432
+    networks:
+      - pgnetwork
+    restart: always
+  pgadmin:
+    container_name: pgadmin-container
+    image: dpage/pgadmin4
+    environment: 
+      PGADMIN_DEFAULT_EMAIL: abc@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_LISTEN_PORT: 80
+    volumes: 
+      - pgadmin:/root/.pgadmin
+    ports: 
+      - 8000:80
+    networks:
+      - pgnetwork
+    restart: always
+networks:
+  pgnetwork:
+    driver: bridge
+volumes: 
+  db:
+  pgadmin:
