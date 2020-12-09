@@ -1,12 +1,21 @@
 const express = require("express");
 const { postgraphile } = require("postgraphile");
-
 const jwt = require("express-jwt");
 const jwksRsa = require("jwks-rsa");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 
-// ...
+const app = express();
+app.use(cors());
+// Enable the use of request body parsing middleware
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({
+    extended: true
+}));
+
+app.get('/', (req, res) => {
+    res.send('Hello World!!!')
+})
 
 const checkJwt = jwt({
     secret: jwksRsa.expressJwtSecret({
@@ -19,21 +28,6 @@ const checkJwt = jwt({
     issuer: `https://hiepxanh.auth0.com/`,
     algorithms: ["RS256"],
 });
-
-const app = express();
-
-// Enable CORS
-app.use(cors());
-
-// Enable the use of request body parsing middleware
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({
-    extended: true
-}));
-
-app.get('/', (req, res) => {
-    res.send('Hello World!!!')
-})
 
 app.get('/master', checkJwt, (req, res) => {
     const userData = req.user;
@@ -50,18 +44,16 @@ app.use(
     // postgraphile(process.env.DATABASE_URL, process.env.DB_SCHEMA, {
     postgraphile('postgres://postgres:admin@localhost:5432/awread_app', "public", {
         pgSettings: req => {
-            const settings = {};
             console.log('req', req);
             if (req.user) {
-                settings["role"] = "reader";
-                settings["user_id"] = req.user.sub;
                 return {
                     role: "reader",
                     "jwt.claims.user_id": req.user.sub,
                 };
             } else {
-                console.warn("failed to authenticate");
-                return { role: "todo_anonymous" };
+                console.warn("failed to authenticate, using role default (anonymous)");
+        // role null will be using default role of Postgraphile
+                return { role: "anonymous" };
             }
         },
         // any other PostGraphile options go here

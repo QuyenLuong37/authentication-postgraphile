@@ -1,14 +1,22 @@
 const express = require("express");
 const { postgraphile } = require("postgraphile");
-const app = express();
-const admin = require('firebase-admin');
 const cors = require("cors");
 const bodyParser = require("body-parser");
 
-
+const app = express();
+const admin = require('firebase-admin');
 app.use(cors());
+// Enable the use of request body parsing middleware
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({
+  extended: true
+}));
 
-// firebase-config.js (should create yourself)
+app.get('/', (req, res) => {
+  res.send('Hello World!!!')
+})
+
+// firebase-config.js (should create yourself a new file call firebase-config.js)
 /**
 const firebaseConfig = {
   apiKey: "",
@@ -25,17 +33,10 @@ module.exports = firebaseConfig;
  */
 // end of firebase-config.js
 
+// copy code above then create new file name firebase-config.js
 const firebaseConfig = require('./firebase-config');
 
 admin.initializeApp(firebaseConfig);
-app.use(cors());
-
-// Enable the use of request body parsing middleware
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({
-  extended: true
-}));
-
 
 const asyncMiddleware = fn =>
   (req, res, next) => {
@@ -59,11 +60,6 @@ const checkJwt = async (req, res, next) => {
   }
 }
 
-
-app.get('/', (req, res) => {
-  res.send('Hello World!!!')
-})
-
 app.get('/master', asyncMiddleware(checkJwt), (req, res) => {
   const userData = req.user;
   console.log('userData', userData);
@@ -79,7 +75,6 @@ app.use("/graphql", asyncMiddleware(checkJwt));
 app.use(
   postgraphile('postgres://postgres:admin@localhost:5432/awread_app', "public", {
     pgSettings: async req => {
-      const settings = {};
       console.log('req.user', req.user);
       if (req.user) {
         return {
