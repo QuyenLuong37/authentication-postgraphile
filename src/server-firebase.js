@@ -4,22 +4,30 @@ const app = express();
 const admin = require('firebase-admin');
 const cors = require("cors");
 const bodyParser = require("body-parser");
-require('dotenv').config();
 
-// var jwt = require('jsonwebtoken');
+
 app.use(cors());
+
+// firebase-config.js (should create yourself)
+/**
+const firebaseConfig = {
+  apiKey: "",
+  authDomain: "",
+  databaseURL: "",
+  projectId: "",
+  storageBucket: "",
+  messagingSenderId: "",
+  appId: "",
+  measurementId: "",
+};
+
+module.exports = firebaseConfig;
+ */
+// end of firebase-config.js
+
 const firebaseConfig = require('./firebase-config');
+
 admin.initializeApp(firebaseConfig);
-
-// const pgConfig = {
-//   host: process.env.PGHOST || "localhost",
-//   port: process.env.PGPORT || 5432,
-//   user: process.env.PGUSER,
-//   database: process.env.PGDATABASE,
-//   password: process.env.PGPASSWORD,
-// };
-
-// Enable CORS
 app.use(cors());
 
 // Enable the use of request body parsing middleware
