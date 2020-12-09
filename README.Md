@@ -10,6 +10,8 @@ nodemon src/server-auth.js
 nodemon src/server-firebase.js
 ```
 
+## YOU CAN USING VSCODE LAUNCH
+
 # IF YOU WANT TO MAKE SOME QUICK REST request
 - install VSCODE Extension 
 Name: REST Client

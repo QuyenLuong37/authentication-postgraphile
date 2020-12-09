@@ -7,7 +7,7 @@
         {
             "type": "pwa-node",
             "request": "launch",
-            "name": "Launch jwt",
+            "name": "Launch Postgraphile Server with Auth0",
             "skipFiles": [
                 "<node_internals>/**"
             ],
@@ -16,7 +16,7 @@
         {
             "type": "pwa-node",
             "request": "launch",
-            "name": "Launch firebase auth",
+            "name": "Launch Postgraphile Server firebase auth",
             "skipFiles": [
                 "<node_internals>/**"
             ],
