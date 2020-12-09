@@ -1,3 +1,5 @@
+# THIS IS POSTGRAPHILE EXAMPLE TO USING AUTH0 AND FIREBASE AUTH
+
 # INSTALL
 ```
 `npm intall` or `yarn install`
@@ -8,5 +10,13 @@ nodemon src/server-auth.js
 nodemon src/server-firebase.js
 ```
 
-postgraphile -c "postgres://postgres:admin@localhost:5432" --watch --show-error-stack --jwt-token-identifier public.jwt_token --jwt-secret superSecretRandom --default-role anonymous
+# IF YOU WANT TO MAKE SOME QUICK REST request
+- install VSCODE Extension 
+Name: REST Client
+Id: humao.rest-client
+Description: REST Client for Visual Studio Code
+Version: 0.24.4
+Publisher: Huachao Mao
+VS Marketplace Link: https://marketplace.visualstudio.com/items?itemName=humao.rest-client
 
+Then make some request in request folder

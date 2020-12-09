@@ -11,7 +11,7 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}\\src\\using-jwt.js"
+            "program": "${workspaceFolder}\\src\\server-auth.js"
         },
         {
             "type": "pwa-node",
@@ -20,7 +20,7 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}\\src\\index.js"
+            "program": "${workspaceFolder}\\src\\server-firebase.js"
         }
     ]
 }
