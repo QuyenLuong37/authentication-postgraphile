@@ -5,19 +5,29 @@ services:
     build: 
       context: ./
       dockerfile: Dockerfile
-    image: buildmydockerfile:v1
+    image: buildmydockerfile:v2
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=postgres://postgres:admin@db:5432/a
+    ports: 
+      - 8080:8080
+    depends_on:
+      - db
+    networks:
+      - pgnetwork
   db:
     container_name: postgres-container
     image: postgres
     hostname: postgres
-    environment: 
+    environment:
+      POSTGRES_DB: b 
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: admin
       PGDATA: /data/postgres
     volumes: 
       - db:/data/postgres
     ports: 
-      - 5433:5432
+      - 5432:5432
     networks:
       - pgnetwork
     restart: always
@@ -38,6 +48,7 @@ services:
 networks:
   pgnetwork:
     driver: bridge
-volumes: 
+volumes:
+  myservice:
   db:
   pgadmin:

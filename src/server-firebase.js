@@ -74,23 +74,29 @@ app.use("/graphql", asyncMiddleware(checkJwt));
 
 app.use(
   postgraphile('postgres://postgres:admin@localhost:5432/awread_app', "public", {
+    watchPg: true,
+    graphiql: true,
+    enhanceGraphiql: true,
     pgSettings: async req => {
       console.log('req.user', req.user);
       if (req.user) {
         return {
-          role: "reader",
-          "jwt.claims.user_id": req.user.uid,
+          role: "writer",
+          "jwt.claims.user_id": '0bde81a0-0b3a-4c14-a5e7-f79d61b3eff8'
+          // req.user.uid,
         };
       } else {
         console.warn("failed to authenticate, using role default (anonymous)");
         // role null will be using default role of Postgraphile
-        return { role: "anonymous" };
+        return { 
+          role: "writer",
+          "jwt.claims.user_id": '0bde81a0-0b3a-4c14-a5e7-f79d61b3eff8'};
       }
     },
     // any other PostGraphile options go here
   })
 );
 
-app.listen(3000, () => {
-  console.log("listening on port", 3000);
+app.listen(4000, () => {
+  console.log("listening on port", 4000);
 });

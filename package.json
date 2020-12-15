@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "postgraphile --port 8080 -o --watch --enhance-graphiql -o -q / --host 0.0.0.0 -c postgres://postgres:admin@34.87.156.91:5432/postgres",
-    "start": "node ./src/index.js"
+    "start": "nodemon src/server-firebase.js"
   },
   "engines": {
     "node": "^10.15",
