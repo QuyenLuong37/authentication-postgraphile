@@ -2,41 +2,21 @@ const express = require("express");
 const { postgraphile } = require("postgraphile");
 const cors = require("cors");
 const bodyParser = require("body-parser");
-
 const app = express();
 const admin = require('firebase-admin');
 app.use(cors());
 // Enable the use of request body parsing middleware
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({
-  extended: true
-}));
+// app.use(bodyParser.json());
+// app.use(bodyParser.urlencoded({
+//   extended: true
+// }));
 
-app.get('/', (req, res) => {
-  res.send('Hello World!!!')
-})
+const firebaseConfig = require('./adminsdk.json');
 
-// firebase-config.js (should create yourself a new file call firebase-config.js)
-/**
-const firebaseConfig = {
-  apiKey: "",
-  authDomain: "",
-  databaseURL: "",
-  projectId: "",
-  storageBucket: "",
-  messagingSenderId: "",
-  appId: "",
-  measurementId: "",
-};
-
-module.exports = firebaseConfig;
- */
-// end of firebase-config.js
-
-// copy code above then create new file name firebase-config.js
-const firebaseConfig = require('./firebase-config');
-
-admin.initializeApp(firebaseConfig);
+admin.initializeApp({
+  credential: admin.credential.cert(firebaseConfig),
+  databaseURL: "https://awready-beta.firebaseio.com"
+});
 
 const asyncMiddleware = fn =>
   (req, res, next) => {
@@ -60,15 +40,6 @@ const checkJwt = async (req, res, next) => {
   }
 }
 
-app.get('/master', asyncMiddleware(checkJwt), (req, res) => {
-  const userData = req.user;
-  console.log('userData', userData);
-  res.send({
-    message: 'master here',
-    user: userData
-  });
-});
-
 
 app.use("/graphql", asyncMiddleware(checkJwt));
 
@@ -79,23 +50,68 @@ app.use(
     enhanceGraphiql: true,
     pgSettings: async req => {
       console.log('req.user', req.user);
-      if (req.user) {
-        return {
-          role: "writer",
-          "jwt.claims.user_id": '0bde81a0-0b3a-4c14-a5e7-f79d61b3eff8'
-          // req.user.uid,
-        };
-      } else {
-        console.warn("failed to authenticate, using role default (anonymous)");
-        // role null will be using default role of Postgraphile
-        return { 
-          role: "writer",
-          "jwt.claims.user_id": '0bde81a0-0b3a-4c14-a5e7-f79d61b3eff8'};
-      }
+      return checkRole(req);
     },
-    // any other PostGraphile options go here
   })
 );
+
+function checkRole(req) {
+  if (req.user) {
+    if (req.user.role === 'mod') {
+      console.log("role is admin");
+      return {
+        role: "admin",
+        "jwt.claims.user_id": req.user.uid
+      }
+    }
+    
+    console.log("role is writer");
+    return {
+      role: "writer",
+      "jwt.claims.user_id": req.user.uid
+      // req.user.uid,
+    };
+  } else {
+    console.warn("failed to authenticate, using role default (anonymous)");
+    // role null will be using default role of Postgraphile
+    return { 
+      role: "anonymous",
+      "jwt.claims.user_id": '0bde81a0-0b3a-4c14-a5e7-f79d61b3eff8'
+    };
+  }
+}
+
+app.post('/setCustomClaims', (req, res) => {
+  // Get the ID token passed.
+  const idToken = req.body.idToken;
+  // Verify the ID token and decode its payload.
+  admin.auth().verifyIdToken(idToken).then((claims) => {
+    // Verify user is eligible for additional privileges.
+    // &&
+    // claims.email.endsWith('@admin.example.com')
+    console.log("claims", claims);
+    if (typeof claims.email !== 'undefined' &&
+        typeof claims.email_verified !== 'undefined' ) {
+          try {
+            admin.auth().setCustomUserClaims(claims.sub, {
+              role: 'mod'
+            }).then(function() {
+              // Tell client to refresh token on user.
+              res.end(JSON.stringify({
+                status: 'success'
+              }));
+            });
+          } catch (error) {
+            res.send(`error: ${JSON.stringify(error)}`);
+          }
+      // Add custom claims for additional privileges.
+      
+    } else {
+      // Return nothing.
+      res.end(JSON.stringify({status: 'ineligible'}));
+    }
+  });
+});
 
 app.listen(4000, () => {
   console.log("listening on port", 4000);
